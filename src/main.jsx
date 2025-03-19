@@ -11,10 +11,10 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ReactFlowProvider>
-      {/* <App /> */}
-      <DndProvider backend={HTML5Backend}>
+      <App />
+      {/* <DndProvider backend={HTML5Backend}>
         <FlowCanvas />
-      </DndProvider>
+      </DndProvider> */}
     </ReactFlowProvider>
   </StrictMode>
 );

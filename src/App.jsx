@@ -167,6 +167,72 @@ const App = () => {
     setDraggedRow({ tableId, columnId, dataType });
   };
 
+  // const handleRowDrop = (e, targetTableId, targetColumnId, targetDataType) => {
+  //   e.preventDefault();
+  //   e.stopPropagation();
+
+  //   if (!draggedRow) return;
+
+  //   // Validate data types
+  //   if (draggedRow.dataType !== targetDataType) {
+  //     alert("Data types do not match!");
+  //     return;
+  //   }
+
+  //   // Create a connection
+  //   const newEdge = {
+  //     id: `edge-${edges.length + 1}`,
+  //     source: draggedRow.tableId,
+  //     sourceHandle: `${draggedRow.tableId}-${draggedRow.columnId}-left`,
+  //     target: targetTableId,
+  //     targetHandle: `${targetTableId}-${targetColumnId}-right`,
+  //     type: "custom",
+  //   };
+
+  //   setEdges((eds) => addEdge(newEdge, eds));
+  //   setDraggedRow(null);
+  // };
+
+  // const handleConnect = (connection) => {
+  //   const sourceNode = nodes.find((node) => node.id === connection.source);
+  //   const targetNode = nodes.find((node) => node.id === connection.target);
+
+  //   const sourceColumn = sourceNode.data.columns.find(
+  //     (col) => col.column_id === connection.sourceHandle.split("-")[1]
+  //   );
+  //   const targetColumn = targetNode.data.columns.find(
+  //     (col) => col.column_id === connection.targetHandle.split("-")[1]
+  //   );
+
+  //   if (sourceColumn.column_data_type === targetColumn.column_data_type) {
+  //     const newEdge = {
+  //       ...connection,
+  //       id: `edge-${edges.length + 1}`,
+  //       label: (
+  //         <div className="flex items-center gap-1">
+  //           <span className="text-sm">=</span>
+  //           <svg
+  //             xmlns="http://www.w3.org/2000/svg"
+  //             width="16"
+  //             height="16"
+  //             viewBox="0 0 24 24"
+  //             fill="none"
+  //             stroke="currentColor"
+  //             strokeWidth="2"
+  //             strokeLinecap="round"
+  //             strokeLinejoin="round"
+  //           >
+  //             <path d="M20 6L9 17l-5-5" />
+  //           </svg>
+  //         </div>
+  //       ),
+  //     };
+  //     setEdges((eds) => addEdge(newEdge, eds));
+  //   } else {
+  //     alert("Data types do not match!");
+  //   }
+  // };
+
   const handleRowDrop = (e, targetTableId, targetColumnId, targetDataType) => {
     e.preventDefault();
     e.stopPropagation();
@@ -179,13 +245,13 @@ const App = () => {
       return;
     }
 
-    // Create a connection
+    // Create a connection (edge) at row level
     const newEdge = {
       id: `edge-${edges.length + 1}`,
       source: draggedRow.tableId,
-      sourceHandle: `${draggedRow.tableId}-${draggedRow.columnId}-left`,
+      sourceHandle: `${draggedRow.tableId}-${draggedRow.columnId}`, // Handle unique to row
       target: targetTableId,
-      targetHandle: `${targetTableId}-${targetColumnId}-right`,
+      targetHandle: `${targetTableId}-${targetColumnId}`,
       type: "custom",
     };
 
@@ -194,39 +260,29 @@ const App = () => {
   };
 
   const handleConnect = (connection) => {
-    const sourceNode = nodes.find((node) => node.id === connection.source);
-    const targetNode = nodes.find((node) => node.id === connection.target);
+    const [sourceTableId, sourceColumnId] = connection.sourceHandle.split("-");
+    const [targetTableId, targetColumnId] = connection.targetHandle.split("-");
 
-    const sourceColumn = sourceNode.data.columns.find(
-      (col) => col.column_id === connection.sourceHandle.split("-")[1]
+    const sourceNode = nodes.find((node) => node.id === sourceTableId);
+    const targetNode = nodes.find((node) => node.id === targetTableId);
+
+    const sourceColumn = sourceNode?.data.columns.find(
+      (col) => col.column_id === sourceColumnId
     );
-    const targetColumn = targetNode.data.columns.find(
-      (col) => col.column_id === connection.targetHandle.split("-")[1]
+    const targetColumn = targetNode?.data.columns.find(
+      (col) => col.column_id === targetColumnId
     );
 
-    if (sourceColumn.column_data_type === targetColumn.column_data_type) {
+    if (sourceColumn?.column_data_type === targetColumn?.column_data_type) {
       const newEdge = {
-        ...connection,
         id: `edge-${edges.length + 1}`,
-        label: (
-          <div className="flex items-center gap-1">
-            <span className="text-sm">=</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M20 6L9 17l-5-5" />
-            </svg>
-          </div>
-        ),
+        source: sourceTableId,
+        sourceHandle: `${sourceTableId}-${sourceColumnId}`,
+        target: targetTableId,
+        targetHandle: `${targetTableId}-${targetColumnId}`,
+        type: "custom",
       };
+
       setEdges((eds) => addEdge(newEdge, eds));
     } else {
       alert("Data types do not match!");
