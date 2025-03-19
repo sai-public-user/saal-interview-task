@@ -11,7 +11,7 @@ import {
 import { tables } from "./utils/data";
 import Sidebar from "./components/Sidebar";
 import TableNode from "./components/TableNode";
-import { CustomEdge } from "./hooks/useIncompleteEdge";
+import { CustomEdge } from "./components";
 
 // Define custom node types
 const nodeTypes = {
@@ -105,13 +105,7 @@ const App = () => {
     // Check if the table already exists
     const existingNode = nodes.findIndex((node) => node.data.id === table.id);
     if (existingNode !== -1) {
-      const updatedNodes = [...nodes];
-      updatedNodes[existingNode].data.isHighlighted = true;
-      setNodes([...updatedNodes]);
-      setTimeout(() => {
-        updatedNodes[existingNode].data.isHighlighted = false;
-        setNodes([...updatedNodes]);
-      }, 500);
+      alert("Table already exists!");
       return;
     }
 
@@ -282,6 +276,8 @@ const App = () => {
           onEdgeClick={handleEdgeClick}
           onNodeDragStop={handleNodeDragStop}
           style={{ backgroundColor: "#F7F9FB" }}
+          minZoom={1}
+          maxZoom={1}
         >
           <Background />
           <Controls showZoom={false} />

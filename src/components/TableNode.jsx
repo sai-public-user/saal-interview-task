@@ -2,17 +2,12 @@ import React from "react";
 import { Handle, Position, NodeResizeControl } from "@xyflow/react";
 
 const TableNode = ({ data, id }) => {
-  const {
-    handleRowDragStart: onRowDragStart,
-    handleRowDrop: onRowDrop,
-    isHighlighted,
-  } = data;
-  console.log("isHight ==> ", isHighlighted);
+  const { handleRowDragStart: onRowDragStart, handleRowDrop: onRowDrop } = data;
   return (
     <div
-      className={`border border-gray-300 bg-white shadow-md rounded-lg overflow-hidden flex flex-col transform transition-transform duration-500 ease-in-out ${
-        isHighlighted ? "scale-125" : "scale-100"
-      }`}
+      className={
+        "border border-gray-300 bg-white shadow-md rounded-lg overflow-hidden flex flex-col"
+      }
       style={{ width: data.width || 250, height: data.height || 300 }}
     >
       <div className="bg-gray-100 p-2 border-b flex justify-between items-center">
@@ -31,7 +26,7 @@ const TableNode = ({ data, id }) => {
       {/* Table with Borders */}
       <div className="overflow-auto w-full h-full scrollbar-hide">
         <table className="table-auto w-full border border-gray-400 border-collapse">
-          <thead className="bg-gray-200">
+          <thead className="bg-gray-200 h-[41px]">
             <tr>
               <th className="border border-gray-400 p-2 text-left">
                 Column Name
@@ -41,7 +36,8 @@ const TableNode = ({ data, id }) => {
               </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="w-full h-[100px]">
+            {/* h-[calc(100%-78px)] */}
             {data.columns.map((col, rowIndex) => (
               <tr
                 key={rowIndex}
@@ -66,7 +62,7 @@ const TableNode = ({ data, id }) => {
       </div>
 
       {/* Table Footer */}
-      <div className="bg-gray-200 p-2 border-t flex justify-between items-center">
+      <div className="bg-gray-200 p-2 border-t flex justify-between items-center h-[37px]">
         <div className="text-sm font-light text-black">
           Scroll for more rows
         </div>
