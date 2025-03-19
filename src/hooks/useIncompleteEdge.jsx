@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { Fragment, useCallback } from "react";
 import {
   addEdge,
   useReactFlow,
@@ -10,18 +10,18 @@ import {
   BaseEdge,
 } from "@xyflow/react";
 
-// export const GhostNode = () => {
-//   return (
-//     <div style={{ width: 5, height: 5 }}>
-//       <Handle
-//         type="target"
-//         position={Position.Top}
-//         isConnectable={false}
-//         // style={{ background: "white" }}
-//       />
-//     </div>
-//   );
-// };
+export const GhostNode = () => {
+  return (
+    <div style={{ width: 5, height: 5 }}>
+      <Handle
+        type="target"
+        position={Position.Top}
+        isConnectable={false}
+        style={{ background: "black" }}
+      />
+    </div>
+  );
+};
 
 export const CustomEdge = ({
   id,
@@ -43,7 +43,7 @@ export const CustomEdge = ({
   });
 
   return (
-    <>
+    <Fragment>
       <BaseEdge id={id} path={edgePath} />
       <EdgeLabelRenderer>
         <div
@@ -55,7 +55,7 @@ export const CustomEdge = ({
           {data.label}
         </div>
       </EdgeLabelRenderer>
-    </>
+    </Fragment>
   );
 };
 
