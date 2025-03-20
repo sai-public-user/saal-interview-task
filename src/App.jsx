@@ -2,18 +2,16 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import {
   Background,
   Controls,
-  addEdge,
   applyNodeChanges,
-  applyEdgeChanges,
+  // applyEdgeChanges,
   ReactFlow,
 } from "@xyflow/react";
+import Xarrow from "react-xarrows";
 import { tables } from "./utils/data";
 import Sidebar from "./components/Sidebar";
 import TableNode from "./components/TableNode";
-import { CustomEdge } from "./components";
 
 const nodeTypes = { tableNode: TableNode };
-const edgeTypes = { custom: CustomEdge };
 
 const NODE_WIDTH = 250;
 const NODE_HEIGHT = 300;
@@ -33,9 +31,6 @@ const isOverlapping = (newNode, nodes) => {
   );
 };
 
-/**
- * Finds the next available position for a node to prevent overlap.
- */
 const getNextAvailablePosition = (nodes, viewportWidth) => {
   let x = START_X;
   let y = START_Y;
@@ -74,7 +69,7 @@ const getNextAvailablePosition = (nodes, viewportWidth) => {
 
 const App = () => {
   const [nodes, setNodes] = useState([]);
-  const [edges, setEdges] = useState([]);
+  const [xarrowConnections, setXarrowConnections] = useState([]);
   const draggedRowRef = useRef(null);
   const lastValidPositions = useRef({});
   const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
@@ -111,8 +106,8 @@ const App = () => {
 
   const handleClose = (id) => {
     setNodes((nds) => nds.filter((node) => node.id !== id));
-    setEdges((eds) =>
-      eds.filter((edge) => edge.source !== id && edge.target !== id)
+    setXarrowConnections((edges) =>
+      edges.filter((edge) => edge.start !== id && edge.end !== id)
     );
   };
 
@@ -168,16 +163,10 @@ const App = () => {
       return;
     }
 
-    const source = `${draggedRowRef.current.tableId}-${draggedRowRef.current.rowId}`;
-    const target = `${targetTableId}-${targetRowId}`;
+    const source = `row-${draggedRowRef.current.tableId}-${draggedRowRef.current.rowId}`;
+    const target = `row-${targetTableId}-${targetRowId}`;
 
-    const newEdge = {
-      id: `edge-${source}-${target}`,
-      source,
-      target,
-    };
-
-    setEdges((prevEdges) => [...prevEdges, newEdge]);
+    setXarrowConnections((prev) => [...prev, { start: source, end: target }]);
     draggedRowRef.current = null;
   };
 
@@ -220,26 +209,31 @@ const App = () => {
       >
         <ReactFlow
           nodes={nodes}
-          edges={edges}
           nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes}
           onNodesChange={(changes) =>
             setNodes((nds) => applyNodeChanges(changes, nds))
-          }
-          onEdgesChange={(changes) =>
-            setEdges((eds) => applyEdgeChanges(changes, eds))
-          }
-          onConnect={(connection) =>
-            setEdges((eds) => addEdge(connection, eds))
           }
           onNodeDragStop={handleNodeDragStop}
           style={{ backgroundColor: "#F7F9FB" }}
           maxZoom={1}
           minZoom={1}
-          colorMode="dark"
+          // colorMode="dark"
         >
           <Background />
           <Controls showZoom={false} />
+          {xarrowConnections.map((conn, index) => (
+            <Xarrow
+              key={index}
+              start={conn.start}
+              end={conn.end}
+              color="deepskyblue"
+              strokeWidth={2}
+              showHead={true}
+              curveness={0.3}
+              monitorDOMchanges={true}
+              keepDrawing={true}
+            />
+          ))}
         </ReactFlow>
       </div>
     </div>

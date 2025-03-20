@@ -1,4 +1,5 @@
 import React from "react";
+import Xarrow from "react-xarrows";
 import { NodeResizeControl } from "@xyflow/react";
 
 const TableNode = ({ data, id, width, height }) => {
@@ -12,7 +13,6 @@ const TableNode = ({ data, id, width, height }) => {
         height: height || 300,
       }}
     >
-      {/* Header with Drag Handle & Close Button */}
       <div className="bg-white-100 p-2 border-b flex justify-between items-center">
         <div className="font-bold flex-1 cursor-move drag-handle">
           {data.name}
@@ -25,17 +25,16 @@ const TableNode = ({ data, id, width, height }) => {
         </button>
       </div>
 
-      {/* Table Header (Fixed) */}
       <div className="bg-blue-200 flex border-b border-blue-400 font-semibold">
         <div className="p-2 w-1/2 border-r border-blue-400">Column Name</div>
         <div className="p-2 w-1/2">Data Type</div>
       </div>
 
-      {/* Scrollable Table Rows */}
       <div className="flex-1 overflow-y-auto h-[calc(100%-90px)]">
         {data.columns.map((col, rowIndex) => (
           <div
             key={rowIndex}
+            id={`row-${id}-${col.column_id}`}
             draggable
             onDragStart={(e) =>
               handleRowDragStart(e, id, col.column_id, col.column_data_type)
@@ -52,13 +51,11 @@ const TableNode = ({ data, id, width, height }) => {
         ))}
       </div>
 
-      {/* Footer with Resize Handle */}
       <div className="bg-blue-100 p-2 border-t flex justify-between items-center relative">
         <div className="text-xs font-bold text-black-50">
           Scroll for more rows
         </div>
 
-        {/* Resize Handle */}
         <NodeResizeControl
           minWidth={250}
           minHeight={300}
