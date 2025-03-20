@@ -22,9 +22,6 @@ const PADDING_Y = 30;
 const START_X = 0;
 const START_Y = 100;
 
-/**
- * Determines if a node overlaps with any existing node.
- */
 const isOverlapping = (newNode, nodes) => {
   return nodes.some(
     (node) =>
@@ -90,16 +87,25 @@ const App = () => {
 
   const handleResizeEnd = (id, width, height) => {
     setNodes((nds) =>
-      nds.map((node) =>
-        node.id === id
-          ? {
-              ...node,
-              width: width || node.width,
-              height: height || node.height,
-              position: { ...node.position },
-            }
-          : node
-      )
+      nds.map((node) => {
+        let finalNode = node;
+        if (node.id === id) {
+          const newNode = {
+            ...node,
+            width: width || node.width,
+            height: height || node.height,
+          };
+          if (
+            !isOverlapping(
+              newNode,
+              nds.filter((item) => item.id !== id)
+            )
+          ) {
+            finalNode = newNode;
+          }
+        }
+        return finalNode;
+      })
     );
   };
 
