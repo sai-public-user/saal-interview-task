@@ -3,10 +3,9 @@ import {
   Background,
   Controls,
   applyNodeChanges,
-  // applyEdgeChanges,
   ReactFlow,
 } from "@xyflow/react";
-import Xarrow from "react-xarrows";
+import Xarrow, { useXarrow, Xwrapper } from "react-xarrows";
 import { tables } from "./utils/data";
 import Sidebar from "./components/Sidebar";
 import TableNode from "./components/TableNode";
@@ -69,6 +68,7 @@ const getNextAvailablePosition = (nodes, viewportWidth) => {
 
 const App = () => {
   const [nodes, setNodes] = useState([]);
+  const updateXarrow = useXarrow();
   const [xarrowConnections, setXarrowConnections] = useState([]);
   const draggedRowRef = useRef(null);
   const lastValidPositions = useRef({});
@@ -113,6 +113,8 @@ const App = () => {
 
   const handleDrop = (event) => {
     event.preventDefault();
+    const data = event?.dataTransfer?.getData("application/reactflow");
+    if (!data) return;
     const table = JSON.parse(
       event.dataTransfer.getData("application/reactflow")
     );
@@ -207,34 +209,38 @@ const App = () => {
         onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
       >
-        <ReactFlow
-          nodes={nodes}
-          nodeTypes={nodeTypes}
-          onNodesChange={(changes) =>
-            setNodes((nds) => applyNodeChanges(changes, nds))
-          }
-          onNodeDragStop={handleNodeDragStop}
-          style={{ backgroundColor: "#F7F9FB" }}
-          maxZoom={1}
-          minZoom={1}
-          // colorMode="dark"
-        >
-          <Background />
-          <Controls showZoom={false} />
-          {xarrowConnections.map((conn, index) => (
-            <Xarrow
-              key={index}
-              start={conn.start}
-              end={conn.end}
-              color="deepskyblue"
-              strokeWidth={2}
-              showHead={true}
-              curveness={0.3}
-              monitorDOMchanges={true}
-              keepDrawing={true}
-            />
-          ))}
-        </ReactFlow>
+        <Xwrapper>
+          <ReactFlow
+            nodes={nodes}
+            nodeTypes={nodeTypes}
+            onNodesChange={(changes) =>
+              setNodes((nds) => applyNodeChanges(changes, nds))
+            }
+            onNodeDragStop={handleNodeDragStop}
+            style={{ backgroundColor: "#F7F9FB" }}
+            maxZoom={1}
+            minZoom={1}
+            preventScrolling={true}
+            onMoveEnd={updateXarrow}
+            // colorMode="dark"
+          >
+            <Background />
+            <Controls showZoom={false} />
+            {xarrowConnections.map((conn, index) => (
+              <Xarrow
+                key={index}
+                start={conn.start}
+                end={conn.end}
+                color="deepskyblue"
+                strokeWidth={2}
+                showHead={true}
+                curveness={0.3}
+                monitorDOMchanges={true}
+                keepDrawing={true}
+              />
+            ))}
+          </ReactFlow>
+        </Xwrapper>
       </div>
     </div>
   );

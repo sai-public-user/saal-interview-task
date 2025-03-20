@@ -1,13 +1,14 @@
 import React from "react";
-import Xarrow from "react-xarrows";
 import { NodeResizeControl } from "@xyflow/react";
+import { useXarrow } from "react-xarrows";
 
 const TableNode = ({ data, id, width, height }) => {
   const { handleRowDragStart, handleRowDrop, onResize, onClose } = data;
+  const updateXarrow = useXarrow();
 
   return (
     <div
-      className="border border-blue-300 bg-white shadow-md rounded-lg flex flex-col overflow-hidden"
+      className="border border-blue-300 bg-white shadow-md rounded-lg flex flex-col"
       style={{
         width: width || 250,
         height: height || 300,
@@ -30,8 +31,9 @@ const TableNode = ({ data, id, width, height }) => {
         <div className="p-2 w-1/2">Data Type</div>
       </div>
 
-      <div className="flex-1 overflow-y-auto h-[calc(100%-90px)]">
+      <div className="flex-1 h-[calc(100%-90px)] overflow-auto">
         {data.columns.map((col, rowIndex) => (
+          // <Xelem k>
           <div
             key={rowIndex}
             id={`row-${id}-${col.column_id}`}
@@ -48,6 +50,7 @@ const TableNode = ({ data, id, width, height }) => {
             <div className="p-2 w-1/2 border-r border-blue-400">{col.name}</div>
             <div className="p-2 w-1/2">{col.column_data_type}</div>
           </div>
+          // </Xelem>
         ))}
       </div>
 
@@ -59,7 +62,10 @@ const TableNode = ({ data, id, width, height }) => {
         <NodeResizeControl
           minWidth={250}
           minHeight={300}
-          onResize={(event, { width, height }) => onResize(id, width, height)}
+          onResize={(event, { width, height }) => {
+            onResize(id, width, height);
+            updateXarrow();
+          }}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
