@@ -66,6 +66,31 @@ const getNextAvailablePosition = (nodes, viewportWidth) => {
   return { x, y };
 };
 
+const adjustPositionToAvoidOverlap = (node, nodes) => {
+  let { x, y } = node.position;
+  while (isOverlapping({ ...node, position: { x, y } }, nodes)) {
+    x += PADDING_X;
+    y += PADDING_Y;
+  }
+  return { x, y };
+};
+
+// const adjustSizeToAvoidOverlap = (node, nodes) => {
+//   let width = node.width;
+//   let height = node.height;
+//   while (
+//     isOverlapping(
+//       { ...node, width, height },
+//       nodes.filter((n) => n.id !== node.id)
+//     )
+//   ) {
+//     width -= 10;
+//     height -= 10;
+//     return { width, height };
+//   }
+//   return { width, height };
+// };
+
 const App = () => {
   const [nodes, setNodes] = useState([]);
   const updateXarrow = useXarrow();
@@ -80,26 +105,37 @@ const App = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // const handleResizeEnd = (id, width, height) => {
+  //   setNodes((nds) =>
+  //     nds.map((node) => {
+  //       if (node.id === id) {
+  //         const newSize = { ...node, width, height };
+  //         return !isOverlapping(
+  //           newSize,
+  //           nds.filter((item) => item.id !== id)
+  //         )
+  //           ? newSize
+  //           : node;
+  //         // adjustSizeToAvoidOverlap(
+  //         //   { ...node, width, height },
+  //         //   nds
+  //         // );
+  //         // return { ...node, width: newSize.width, height: newSize.height };
+  //       }
+  //       return node;
+  //     })
+  //   );
+  // };
+
   const handleResizeEnd = (id, width, height) => {
     setNodes((nds) =>
       nds.map((node) => {
-        let finalNode = node;
         if (node.id === id) {
-          const newNode = {
-            ...node,
-            width: width || node.width,
-            height: height || node.height,
-          };
-          if (
-            !isOverlapping(
-              newNode,
-              nds.filter((item) => item.id !== id)
-            )
-          ) {
-            finalNode = newNode;
-          }
+          let newNode = { ...node, width, height };
+          let adjustedPosition = adjustPositionToAvoidOverlap(newNode, nds);
+          return { ...newNode, position: adjustedPosition };
         }
-        return finalNode;
+        return node;
       })
     );
   };

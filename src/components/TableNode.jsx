@@ -33,7 +33,6 @@ const TableNode = ({ data, id, width, height }) => {
 
       <div className="flex-1 h-[calc(100%-90px)] overflow-auto">
         {data.columns.map((col, rowIndex) => (
-          // <Xelem k>
           <div
             key={rowIndex}
             id={`row-${id}-${col.column_id}`}
@@ -50,7 +49,6 @@ const TableNode = ({ data, id, width, height }) => {
             <div className="p-2 w-1/2 border-r border-blue-400">{col.name}</div>
             <div className="p-2 w-1/2">{col.column_data_type}</div>
           </div>
-          // </Xelem>
         ))}
       </div>
 
