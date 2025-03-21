@@ -128,6 +128,7 @@ const App = () => {
   // };
 
   const handleResizeEnd = (id, width, height) => {
+    updateXarrow();
     setNodes((nds) =>
       nds.map((node) => {
         if (node.id === id) {
@@ -143,8 +144,17 @@ const App = () => {
   const handleClose = (id) => {
     setNodes((nds) => nds.filter((node) => node.id !== id));
     setXarrowConnections((edges) =>
-      edges.filter((edge) => edge.start !== id && edge.end !== id)
+      edges.filter((edge) => {
+        const start = edge.start.split("-");
+        start.pop();
+        start.shift();
+        const end = edge.end.split("-");
+        end.pop();
+        end.shift();
+        return start.join("-") !== id && end.join("-") !== id;
+      })
     );
+    updateXarrow();
   };
 
   const handleDrop = (event) => {
